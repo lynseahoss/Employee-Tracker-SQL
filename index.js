@@ -1,5 +1,5 @@
-var mysql = require("mysql");
-var inquirer = require("inquirer");
+var mysql = require("mysql")
+var inquirer = require("inquirer")
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -14,4 +14,10 @@ var connection = mysql.createConnection({
   // Your password
   password: "",
   database: "employee_db"
-});
+})
+
+connection.connect(function(err) {
+  if (err) throw err
+  console.log("connected as id " + connection.threadId)
+  connection.end()
+})
