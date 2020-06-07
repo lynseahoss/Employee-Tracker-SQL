@@ -28,7 +28,7 @@ function init(){
   .prompt({
     name: "option",
     message: "Choose ",
-    type: "list",
+    type: "rawlist",
     choices: [
       "Departments",
       "Roles",
