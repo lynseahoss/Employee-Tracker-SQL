@@ -22,7 +22,7 @@ connection.connect(function(err) {
   connection.end()
 })
 
-//function to prompt user what action they want to do
+//function to prompt user what option they would like to choose from
 function init(){
   inquirer
   .prompt({
@@ -30,9 +30,9 @@ function init(){
     message: "Choose ",
     type: "list",
     choices: [
-      "View Departments",
-      "View Roles",
-      "View Employees",
+      "Departments",
+      "Roles",
+      "Employees",
       "Add Department",
       "Add Role",
       "Add Employee",
@@ -40,5 +40,35 @@ function init(){
       "Exit"
     ]
   })
-  .then()
+  .then(choice =>{
+    switch (choice.option){
+      case "Departments":
+      departments()
+      break
+
+      case "Roles":
+        roles()
+        break
+
+      case "Employees":
+        employees()
+        break
+
+      case "Add Department":
+        addDepartment()
+        break
+      
+      case "Add Role":
+        addRole()
+        break
+      
+      case "Add Employee":
+        addEmployee()
+        break
+      
+      case "Exit":
+        connection.end()
+        break
+    }
+  })
 }
