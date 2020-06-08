@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "sprinkles",
   database: "employee_db"
 })
 //connect to database & run init ()
@@ -20,6 +20,8 @@ connection.connect(function(err) {
   if (err) throw err
   initApp()
 })
+//Global Variables
+let jobs = addRole()
 
 //function to prompt user what option they would like to choose from
 const initApp = () => {
@@ -71,3 +73,101 @@ const initApp = () => {
     }
   })
 }
+//add Department to db
+function addDepartment(){
+  inquirer.prompt({
+      name: "department",
+      message: "Enter Department Name",
+      type: "input"
+  }).then(answer=>{
+      connection.query('INSERT INTO department SET ?',
+      { name: answer.department}, err =>{
+  if(err) throw err
+  })
+//Return to initial home page
+initApp()
+  })
+}
+
+//create new employee to db
+function addEmployee (){
+inquirer
+.prompt([{
+    name: "firstName",
+    message: "What is the employee's first name?",
+    type: "input"
+},
+{
+    name: "lastName",
+    message: "What is the employee's last name?",
+    type: "input"
+},
+{
+    name: "role",
+    message: "What is the employee's role?",
+    type: "list",
+    choices: jobs
+}]) 
+.then(answer => {
+//adding role id to employee 
+let empID = jobs.indexOf(answer.role)+1
+//adding response to database
+connection.query('INSERT INTO employee SET ?',
+{
+   first_name: answer.firstName,
+   last_name: answer.lastName,
+   role_id: empID
+}, err =>{
+    if(err) throw err
+})
+//Return to initial home page
+initApp()
+})
+}
+//add role to db
+function addRole (){
+  connection.query('SELECT * FROM department',(err,res) =>{
+      if (err) throw err
+      inquirer.prompt([{
+          name: "roleTitle",
+          message: "Enter Title",
+          type: "input"
+      },
+      {
+          name: "salary",
+          message: "Enter salary amount",
+          type: "input",
+          validate: function(value) {
+              if (isNaN(value) === false) {
+                return true;
+              }
+              return false;
+            }
+          },
+      {
+          name: "department",
+          message: "Choose department",
+          type: "rawlist",
+          choices: () =>{
+              let deptArray = []
+              for (let i = 0; i < res.length; i++){
+                  deptArray.push(res[i].id + res[i].name)
+              }
+              return deptArray
+          }
+          }])
+  }).then(answer => {
+      let departmentID = parseInt(answer.department.split("")[0])
+      connection.query('INSERT INTO role SET?', {
+          title: answer.roleTitle,
+          salary: answer.salary,
+          department_id: departmentID
+      },
+      err => { 
+          if(err) throw err 
+      })
+//Return to initial home page
+initApp()
+  })
+  }
+//view departments
