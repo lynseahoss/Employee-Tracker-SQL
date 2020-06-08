@@ -1,5 +1,5 @@
 const mysql = require("mysql")
-cosnt inquirer = require("inquirer")
+const inquirer = require("inquirer")
 
 // create the connection information for the sql database
 const connection = mysql.createConnection({
@@ -15,15 +15,14 @@ const connection = mysql.createConnection({
   password: "",
   database: "employee_db"
 })
-
+//connect to database & run init ()
 connection.connect(function(err) {
   if (err) throw err
-  console.log("connected as id " + connection.threadId)
-  connection.end()
+  initApp()
 })
 
 //function to prompt user what option they would like to choose from
-function init(){
+const initApp = () => {
   inquirer
   .prompt({
     name: "option",
@@ -40,7 +39,7 @@ function init(){
       "Exit"
     ]
   })
-  .then(choice =>{
+  .then(choice => {
     switch (choice.option){
       case "Departments":
       departments()
