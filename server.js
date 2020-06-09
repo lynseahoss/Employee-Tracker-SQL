@@ -168,11 +168,8 @@ const addRole = () => {
     })
    })
   }
-  //retrieve all roles
-  // const retrieveRoles = 
   //add employee to db
   const addEmployee = () => {
-    // let newEmpRole = retrieveRoles()
     inquirer
     .prompt([{
         name: "firstName",
