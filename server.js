@@ -23,7 +23,7 @@ connection.connect(function(err) {
 
 
 //function to prompt user what option they would like to choose from
-function initApp () {
+const initApp = () => {
   inquirer
   .prompt({
     name: "option",
@@ -77,8 +77,8 @@ function initApp () {
   })
 }
 //view departments
-function viewDepartments() {
-  connection.query('SELECT * FROM department', (err, res) =>{
+const viewDepartments= () => {
+  connection.query("SELECT * FROM department", (err, res) =>{
     if(err) throw err
     console.table(res)
      //Return to home page
@@ -86,8 +86,8 @@ function viewDepartments() {
   })
 } 
 //view roles
-function viewRoles(){
-    connection.query('SELECT id, title FROM role', (err, res) =>{
+const viewRoles= () => {
+    connection.query("SELECT id, title FROM role", (err, res) =>{
         if(err) throw err
         console.table(res ["id", "title"])
          //Return to home page
@@ -95,7 +95,7 @@ function viewRoles(){
 })
 }
 //view employees
-function viewEmployees(){
+const viewEmployees = () => {
     let empQuery = 'SELECT employee.first_name, employee.last_name, role.title,' + 'department.name FROM employee' 
     + 'LEFT JOIN role on employee.id = role.id' 
     + 'LEFT JOIN department on role.department_id = department.id'
@@ -107,13 +107,13 @@ function viewEmployees(){
       })
 }
 //add Department to db
-function addDepartment(){
+const addDepartment = () => {
     inquirer.prompt({
         name: "department",
         message: "Enter Department Name",
         type: "input"
     }).then(answer=>{
-        connection.query('INSERT INTO department SET ?',
+        connection.query("INSERT INTO department SET ?",
         { name: answer.department}, err =>{
     if(err) throw err
     })
@@ -122,8 +122,8 @@ function addDepartment(){
     })
   }
 //add role to db
-function addRole() {
-   connection.query('SELECT * FROM department', (err,res)=>{
+const addRole = () => {
+   connection.query("SELECT * FROM department", (err,res)=>{
     if(err) throw err
     inquirer.prompt([{
         name: "title",
@@ -145,7 +145,7 @@ function addRole() {
         name: "department",
         message: "Choose department",
         type: "list",
-        choices: function(){
+        choices: ()=>{
             let depOption = []
             for(let i =0; i< res.length; i++){
                 depOption.push(`${res[i].id} ${res[i].name}`)
@@ -156,7 +156,7 @@ function addRole() {
         let roleTitle = answer.title
         let roleSalary = answer.salary
         let departmentID = parseInt(answer.department.split("")[0])
-        connection.query("INSERT INTO role SET ?",[ roleTitle ,roleSalary, departmentID ],
+        connection.query("INSERT INTO role SET ?",[roleTitle ,roleSalary, departmentID],
         err => { 
             if(err) throw err 
         })
@@ -165,9 +165,10 @@ function addRole() {
     })
    })
   }
-  const jobs = []
+ 
   //add employee to db
-  function addEmployee (){
+  const addEmployee = () => {
+    let jobs = addRole()
     inquirer
     .prompt([{
         name: "firstName",
@@ -187,14 +188,12 @@ function addRole() {
     }]) 
     .then(answer => {
     //adding role id to employee 
+    let first_name = answer.firstName
+    let last_name = answer.lastName
     let empID = jobs.indexOf(answer.role)+1
     //adding response to database
-    connection.query('INSERT INTO employee SET ?',
-    {
-       first_name: answer.firstName,
-       last_name: answer.lastName,
-       role_id: empID
-    }, err =>{
+    connection.query("INSERT INTO employee SET ?",[first_name, last_name, empID]
+    , err =>{
         if(err) throw err
     })
     //Return to home page
@@ -203,5 +202,27 @@ function addRole() {
     }
 //update employee role in db
 function updateEmployee(){
-    connection.query()
+    let updateRole = addRole()
+    connection.query("SELECT * FROM employee", (err,res)=>{
+             if(err) throw err 
+    inquirer.prompt([{
+        name:"employee",
+        message: "Enter employee that needs to be updated",
+        type: "list",
+        choices: ()=>{
+            let arrEmp = []
+            for(let i =0; i< res.length; i++){
+                arrEmp.push(`${res[i].id} ${res[i].first_name} ${res[i].last_name}`)
+            }
+            return arrEmp
+        }
+    },
+    {
+        name: "title",
+        message: "Enter the updated role of employee",
+        type: "list",
+        choices: updateRole
+    }])
+
+    })
 }
