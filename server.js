@@ -81,6 +81,7 @@ const viewDepartments = () => {
   connection.query('SELECT * FROM department', (err, res) =>{
     if(err) throw err
     console.table(res)
+     //Return to home page
     initApp()
   })
 } 
@@ -88,8 +89,36 @@ const viewDepartments = () => {
 const viewRoles = () =>{
     connection.query('SELECT id, title FROM role', (err, res) =>{
         if(err) throw err
-        console.table(res)
+        console.table(res ["id", "title"])
+         //Return to home page
         initApp()
 })
 }
-
+//view employees
+const viewEmployees = () =>{
+    let empQuery = 'SELECT employee.first_name, employee.last_name, role.title,' + 'department.name FROM employee' 
+    + 'LEFT JOIN role on employee.id = role.id' 
+    + 'LEFT JOIN department on role.department_id = department.id'
+    connection.query(empQuery, (err, res) =>{
+        if(err) throw err
+        console.table(res)
+         //Return to home page
+        initApp()
+      })
+}
+//add Department to db
+function addDepartment(){
+    inquirer.prompt({
+        name: "department",
+        message: "Enter Department Name",
+        type: "input"
+    }).then(answer=>{
+        connection.query('INSERT INTO department SET ?',
+        { name: answer.department}, err =>{
+    if(err) throw err
+    })
+  //Return to home page
+  initApp()
+    })
+  }
+//add role to db
