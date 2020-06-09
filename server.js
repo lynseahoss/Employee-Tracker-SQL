@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: " ",
+  password: "sprinkles",
   database: "employee_db"
 })
 //connect to database & run init ()
@@ -168,9 +168,11 @@ const addRole = () => {
     })
    })
   }
+  //retrieve all roles
+  // const retrieveRoles = 
   //add employee to db
   const addEmployee = () => {
-    let jobs = addRole()
+    // let newEmpRole = retrieveRoles()
     inquirer
     .prompt([{
         name: "firstName",
@@ -186,16 +188,24 @@ const addRole = () => {
         name: "role",
         message: "What is the employee's role?",
         type: "list",
-        choices: jobs
+        choices: () =>{
+          let newRole = []
+          connection.query('SELECT title FROM role', (err, res)=>{
+            if(err) throw err
+            for(let i = 0; i < res.length; i++){
+              newRole.push(res[i].title)
+            }
+          })
+        }
     }]) 
     .then(answer => {
     //adding role id to employee 
-    let firName = answer.firstName
-    let laName = answer.lastName
+    let firstName = answer.firstName
+    let lastName = answer.lastName
     let employeeID = jobs.indexOf(answer.role)+1
-    const query = "INSERT INTO employee (first_name, last_name, role_id) VALUES (?,?,?)"
+    const query = "INSERT INTO employee SET ?"
     //adding response to database
-    connection.query(query,[firName, laName, employeeID]
+    connection.query(query, [firstName, lastName, employeeID]
     , err =>{
         if(err) throw err
     })
