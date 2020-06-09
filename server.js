@@ -168,28 +168,10 @@ const addRole = () => {
     })
    })
   }
-  //retrieve all roles
-  // const retrieveRoles = () =>{
-  //   let newRole = []
-  //   connection.query('SELECT title FROM role', (err, res)=>{
-  //     if(err) throw err
-  //     console.log(res)
-  //     for(let i = 0; i < res.length; i++){
-  //       newRole.push(res[i].title)
-  //     }
-  //     return newRole
-  //   })
-  // }
   //add employee to db
   const addEmployee = () => {
-
-    const newRole =[]
     connection.query('SELECT title FROM role', (err, res)=>{
       if(err) throw err
-
-      for(let i = 0; i < res.length; i++){
-        newRole.push(res[i].title)
-      } 
       inquirer
       .prompt([{
           name: "firstName",
@@ -211,7 +193,7 @@ const addRole = () => {
       //adding role id to employee 
       let firstName = answer.firstName
       let lastName = answer.lastName
-      let role_id = answer.role
+      let role_id = answer.id
       const query = "INSERT INTO employee (first_name, last_name, role_id) VALUE (?,?,?)"
       //adding response to database
       connection.query(query, [firstName, lastName, role_id]
@@ -221,19 +203,14 @@ const addRole = () => {
       //Return to home page
       initApp()
       })
-    })
+     })
     }
   
 //update employee role in db
 const updateEmployee = () => {
-  const updateRole =[]
+  
   connection.query('SELECT title FROM role', (err, res)=>{
-    if(err) throw err
-
-    for(let i = 0; i < res.length; i++){
-      updateRole.push(res[i].title)
-    } 
-    
+   
     const query = "SELECT * FROM employee"
     connection.query(query, (err,res)=>{
              if(err) throw err 
