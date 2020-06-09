@@ -205,7 +205,7 @@ const addRole = () => {
           name: "role",
           message: "What is the employee's role?",
           type: "list",
-          choices: newRole
+          choices: res.map(role=>({name: role.title, value: role.id}))
       }]) 
       .then(answer => {
       //adding role id to employee 
@@ -253,7 +253,7 @@ const updateEmployee = () => {
         name: "newTitle",
         message: "Enter the updated role of employee",
         type: "list",
-        choices: updateRole
+        choices: res.map(role=>({name: role.title, value: role.id}))
         
     }]).then(answer =>{
         let emp_id = parseInt(answer.employee.split("")[0])
