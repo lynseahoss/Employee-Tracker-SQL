@@ -195,7 +195,7 @@ const addRole = () => {
     let employeeID = jobs.indexOf(answer.role)+1
     const query = "INSERT INTO employee (firt_name, last_name, role_id) VALUES (?,?,?)"
     //adding response to database
-    connection.query(query,[first_name, last_name, employeeID]
+    connection.query(query,[firName, laName, employeeID]
     , err =>{
         if(err) throw err
     })
@@ -203,9 +203,10 @@ const addRole = () => {
     initApp()
     })
     }
+    const updateArr = []
 //update employee role in db
 const updateEmployee = () => {
-    let updateArr = []
+    
     let updateRole = addRole()
     const query = "SELECT * FROM employee"
     connection.query(query, (err,res)=>{
@@ -230,7 +231,7 @@ const updateEmployee = () => {
         // choices: ()=>{
         //     let arrRole = []
         //     for(let i =0; i< res.length; i++){
-        //         arrRole.push(`${res[i].title} ${res[i].salary} ${res[i].department_id}`)
+        //         arrRole.push(`${res[i].id} ${res[i].title}`)
         //     }
         //     return arrRole
         // }
@@ -243,6 +244,7 @@ const updateEmployee = () => {
             initApp()
         })
     })
+    
 
     })
 }
