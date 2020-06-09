@@ -3,3 +3,6 @@ VALUES ('CEO', 250000, 1), ('CTO', 250000, 1), ('UI/UX', 85000, 2), ('Back-End D
 
 INSERT INTO department (name)
 VALUES ('Dev Team'), ('QA'), ('Accounting'), ('Creative'), ('HR');
+
+INSERT INTO employee (first_name, last_name, role_id)
+Values ('Sprinkles', 'Lawson', 1), ('Akash', 'Lawson', 2), ('Nahdri', 'Lawson', 3)

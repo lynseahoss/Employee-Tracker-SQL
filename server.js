@@ -36,21 +36,21 @@ const initApp = () => {
       "Add Department",
       "Add Role",
       "Add Employee",
-      "Update Employee info",
+      "Update Employee role",
       "Exit"
     ]
   })
   .then(choice => {
     switch (choice.option){
-      case "Departments":
+      case "View Departments":
       viewDepartments()
       break
 
-      case "Roles":
+      case "View Roles":
         viewRoles()
         break
 
-      case "Employees":
+      case "View Employees":
         viewEmployees()
         break
 
@@ -87,17 +87,17 @@ const viewDepartments= () => {
 } 
 //view roles
 const viewRoles= () => {
-    connection.query("SELECT id, title FROM role", (err, res) =>{
+    connection.query("SELECT * FROM role", (err, res) =>{
         if(err) throw err
-        console.table(res ["id", "title"])
+        console.table(res)
          //Return to home page
         initApp()
 })
 }
 //view employees
 const viewEmployees = () => {
-    
-    connection.query("SELECT * FROM employee", (err, res) =>{
+    const query = "SELECT * FROM employee"
+    connection.query(query, (err, res) =>{
         if(err) throw err
         console.table(res)
          //Return to home page
