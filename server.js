@@ -96,10 +96,8 @@ const viewRoles= () => {
 }
 //view employees
 const viewEmployees = () => {
-    let empQuery = 'SELECT employee.first_name, employee.last_name, role.title,' + 'department.name FROM employee' 
-    + 'LEFT JOIN role on employee.id = role.id' 
-    + 'LEFT JOIN department on role.department_id = department.id'
-    connection.query(empQuery, (err, res) =>{
+    
+    connection.query("SELECT * FROM employee", (err, res) =>{
         if(err) throw err
         console.table(res)
          //Return to home page
@@ -121,6 +119,7 @@ const addDepartment = () => {
   initApp()
     })
   }
+
 //add role to db
 const addRole = () => {
    connection.query("SELECT * FROM department", (err,res)=>{
@@ -165,7 +164,6 @@ const addRole = () => {
     })
    })
   }
- 
   //add employee to db
   const addEmployee = () => {
     let jobs = addRole()
@@ -190,9 +188,9 @@ const addRole = () => {
     //adding role id to employee 
     let first_name = answer.firstName
     let last_name = answer.lastName
-    let empID = jobs.indexOf(answer.role)+1
+    let employeeID = jobs.indexOf(answer.role)+1
     //adding response to database
-    connection.query("INSERT INTO employee SET ?",[first_name, last_name, empID]
+    connection.query("INSERT INTO employee SET ?",[first_name, last_name, employeeID]
     , err =>{
         if(err) throw err
     })
@@ -221,8 +219,15 @@ function updateEmployee(){
         name: "title",
         message: "Enter the updated role of employee",
         type: "list",
-        choices: updateRole
-    }])
+        choices: updateRole //use addRole() to select new role
+    }]).then(answer =>{
+        let emp_id = parseInt(answer.employee.split("")[0])
+        let role_id = updateRole.indexOf(answer.role)+1
+        connection.query("UPDATE employee SET role_id = ? WHERE id =?",[emp_id, role_id],err =>{
+            if(err) throw err
+            initApp()
+        })
+    })
 
     })
 }
