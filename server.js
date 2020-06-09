@@ -190,8 +190,6 @@ const addRole = () => {
       for(let i = 0; i < res.length; i++){
         newRole.push(res[i].title)
       } 
-
-    
       inquirer
       .prompt([{
           name: "firstName",
@@ -214,7 +212,7 @@ const addRole = () => {
       let firstName = answer.firstName
       let lastName = answer.lastName
       let role_id = answer.role
-      const query = "INSERT INTO employee VALUE (?,?,?)"
+      const query = "INSERT INTO employee (first_name, last_name, role_id) VALUE (?,?,?)"
       //adding response to database
       connection.query(query, [firstName, lastName, role_id]
       , err =>{
