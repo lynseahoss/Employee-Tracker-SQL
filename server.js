@@ -168,8 +168,19 @@ const addRole = () => {
     })
    })
   }
+  //retrieve all roles
+  const retrieveRoles = () =>{
+    let newRole = []
+    connection.query('SELECT title FROM role', (err, res)=>{
+      if(err) throw err
+      for(let i = 0; i < res.length; i++){
+        newRole.push(res[i].title)
+      }
+    })
+  }
   //add employee to db
   const addEmployee = () => {
+    let newEmpRole = retrieveRoles()
     inquirer
     .prompt([{
         name: "firstName",
@@ -185,15 +196,7 @@ const addRole = () => {
         name: "role",
         message: "What is the employee's role?",
         type: "list",
-        choices: () =>{
-          let newRole = []
-          connection.query('SELECT title FROM role', (err, res)=>{
-            if(err) throw err
-            for(let i = 0; i < res.length; i++){
-              newRole.push(res[i].title)
-            }
-          })
-        }
+        choices: newEmpRole
     }]) 
     .then(answer => {
     //adding role id to employee 
@@ -210,11 +213,11 @@ const addRole = () => {
     initApp()
     })
     }
-    const updateArr = []
+  
 //update employee role in db
 const updateEmployee = () => {
     
-    let updateRole = []
+    let updateRole =  retrieveRoles()
     const query = "SELECT * FROM employee"
     connection.query(query, (err,res)=>{
              if(err) throw err 
@@ -234,7 +237,7 @@ const updateEmployee = () => {
         name: "newTitle",
         message: "Enter the updated role of employee",
         type: "list",
-        choices: updateArr
+        choices: updateRole
         
     }]).then(answer =>{
         let emp_id = parseInt(answer.employee.split("")[0])
