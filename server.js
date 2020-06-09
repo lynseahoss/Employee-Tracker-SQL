@@ -193,7 +193,7 @@ const addRole = () => {
     let firName = answer.firstName
     let laName = answer.lastName
     let employeeID = jobs.indexOf(answer.role)+1
-    const query = "INSERT INTO employee (firt_name, last_name, role_id) VALUES (?,?,?)"
+    const query = "INSERT INTO employee (first_name, last_name, role_id) VALUES (?,?,?)"
     //adding response to database
     connection.query(query,[firName, laName, employeeID]
     , err =>{
