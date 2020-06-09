@@ -20,20 +20,19 @@ connection.connect(function(err) {
   if (err) throw err
   initApp()
 })
-//Global Variables
-let jobs = addRole()
+
 
 //function to prompt user what option they would like to choose from
 const initApp = () => {
   inquirer
   .prompt({
     name: "option",
-    message: "Choose ",
+    message: "Choose action",
     type: "rawlist",
     choices: [
-      "Departments",
-      "Roles",
-      "Employees",
+      "View Departments",
+      "View Roles",
+      "View Employees",
       "Add Department",
       "Add Role",
       "Add Employee",
@@ -44,15 +43,15 @@ const initApp = () => {
   .then(choice => {
     switch (choice.option){
       case "Departments":
-      departments()
+      viewDepartments()
       break
 
       case "Roles":
-        roles()
+        viewRoles()
         break
 
       case "Employees":
-        employees()
+        viewEmployees()
         break
 
       case "Add Department":
@@ -73,6 +72,23 @@ const initApp = () => {
     }
   })
 }
+//view departments
+function viewDepartments(){
+  connection.query('SELECT * FROM department', (err, res) =>{
+    if(err) throw err
+    console.table(res)
+    initApp()
+  })
+} 
+//view roles
+function viewRoles (){
+  connection.query('SELECT * FROM role', (err, res)=>{
+    if(err) throw err
+    console.table(res)
+    initApp()
+  })
+}
+
 //add Department to db
 function addDepartment(){
   inquirer.prompt({
@@ -87,42 +103,6 @@ function addDepartment(){
 //Return to initial home page
 initApp()
   })
-}
-
-//create new employee to db
-function addEmployee (){
-inquirer
-.prompt([{
-    name: "firstName",
-    message: "What is the employee's first name?",
-    type: "input"
-},
-{
-    name: "lastName",
-    message: "What is the employee's last name?",
-    type: "input"
-},
-{
-    name: "role",
-    message: "What is the employee's role?",
-    type: "list",
-    choices: jobs
-}]) 
-.then(answer => {
-//adding role id to employee 
-let empID = jobs.indexOf(answer.role)+1
-//adding response to database
-connection.query('INSERT INTO employee SET ?',
-{
-   first_name: answer.firstName,
-   last_name: answer.lastName,
-   role_id: empID
-}, err =>{
-    if(err) throw err
-})
-//Return to initial home page
-initApp()
-})
 }
 //add role to db
 function addRole (){
@@ -170,4 +150,42 @@ function addRole (){
 initApp()
   })
   }
-//view departments
+//Global Variables
+let jobs = addRole()
+//create new employee to db
+function addEmployee (){
+inquirer
+.prompt([{
+    name: "firstName",
+    message: "What is the employee's first name?",
+    type: "input"
+},
+{
+    name: "lastName",
+    message: "What is the employee's last name?",
+    type: "input"
+},
+{
+    name: "role",
+    message: "What is the employee's role?",
+    type: "list",
+    choices: jobs
+}]) 
+.then(answer => {
+//adding role id to employee 
+let empID = jobs.indexOf(answer.role)+1
+//adding response to database
+connection.query('INSERT INTO employee SET ?',
+{
+   first_name: answer.firstName,
+   last_name: answer.lastName,
+   role_id: empID
+}, err =>{
+    if(err) throw err
+})
+//Return to initial home page
+initApp()
+})
+}
+
+
