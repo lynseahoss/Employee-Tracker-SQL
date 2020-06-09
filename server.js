@@ -204,7 +204,8 @@ const addRole = () => {
     })
     }
 //update employee role in db
-function updateEmployee(){
+const updateEmployee = () => {
+    let updateArr = []
     let updateRole = addRole()
     const query = "SELECT * FROM employee"
     connection.query(query, (err,res)=>{
@@ -225,13 +226,14 @@ function updateEmployee(){
         name: "newTitle",
         message: "Enter the updated role of employee",
         type: "list",
-        choices: ()=>{
-            let arrRole = []
-            for(let i =0; i< res.length; i++){
-                arrRole.push(`${res[i].title} ${res[i].salary} ${res[i].department_id}`)
-            }
-            return arrRole
-        }
+        choices: updateArr
+        // choices: ()=>{
+        //     let arrRole = []
+        //     for(let i =0; i< res.length; i++){
+        //         arrRole.push(`${res[i].title} ${res[i].salary} ${res[i].department_id}`)
+        //     }
+        //     return arrRole
+        // }
     }]).then(answer =>{
         let emp_id = parseInt(answer.employee.split("")[0])
         let role_id = updateRole.indexOf(answer.role)+1
