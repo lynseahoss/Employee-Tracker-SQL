@@ -173,44 +173,56 @@ const addRole = () => {
     let newRole = []
     connection.query('SELECT title FROM role', (err, res)=>{
       if(err) throw err
+      console.log(res)
       for(let i = 0; i < res.length; i++){
         newRole.push(res[i].title)
       }
+      return newRole
     })
   }
   //add employee to db
   const addEmployee = () => {
-    let newEmpRole = retrieveRoles()
-    inquirer
-    .prompt([{
-        name: "firstName",
-        message: "What is the employee's first name?",
-        type: "input"
-    },
-    {
-        name: "lastName",
-        message: "What is the employee's last name?",
-        type: "input"
-    },
-    {
-        name: "role",
-        message: "What is the employee's role?",
-        type: "list",
-        choices: newEmpRole
-    }]) 
-    .then(answer => {
-    //adding role id to employee 
-    let firstName = answer.firstName
-    let lastName = answer.lastName
-    let employeeID = jobs.indexOf(answer.role)+1
-    const query = "INSERT INTO employee SET ?"
-    //adding response to database
-    connection.query(query, [firstName, lastName, employeeID]
-    , err =>{
-        if(err) throw err
-    })
-    //Return to home page
-    initApp()
+
+    const newRole =[]
+    connection.query('SELECT title FROM role', (err, res)=>{
+      if(err) throw err
+
+      for(let i = 0; i < res.length; i++){
+        newRole.push(res[i].title)
+      }
+
+    
+      inquirer
+      .prompt([{
+          name: "firstName",
+          message: "What is the employee's first name?",
+          type: "input"
+      },
+      {
+          name: "lastName",
+          message: "What is the employee's last name?",
+          type: "input"
+      },
+      {
+          name: "role",
+          message: "What is the employee's role?",
+          type: "list",
+          choices: newRole
+      }]) 
+      .then(answer => {
+      //adding role id to employee 
+      let firstName = answer.firstName
+      let lastName = answer.lastName
+      let role_id = answer.role
+      const query = "INSERT INTO employee SET ?"
+      //adding response to database
+      connection.query(query, [firstName, lastName, role_id]
+      , err =>{
+          if(err) throw err
+      })
+      //Return to home page
+      initApp()
+      })
     })
     }
   
