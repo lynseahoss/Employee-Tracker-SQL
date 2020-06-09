@@ -65,6 +65,10 @@ const initApp = () => {
       case "Add Employee":
         addEmployee()
         break
+
+      case "Update Employee info":
+        updateEmployee()
+        break
       
       case "Exit":
         connection.end()
@@ -88,7 +92,14 @@ function viewRoles (){
     initApp()
   })
 }
-
+//view employees
+function viewEmployees(){
+  connection.query('SELECT * FROM employee', (err, res)=>{
+    if(err) throw err
+    console.table(res)
+    initApp()
+  })
+}
 //add Department to db
 function addDepartment(){
   inquirer.prompt({
