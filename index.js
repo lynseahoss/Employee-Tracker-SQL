@@ -78,7 +78,7 @@ const initApp = () => {
 }
 //view departments
 function viewDepartments(){
-  connection.query('SELECT * FROM department', (err, res) =>{
+  connection.query('SELECT name FROM department', (err, res) =>{
     if(err) throw err
     console.table(res)
     initApp()
@@ -86,7 +86,7 @@ function viewDepartments(){
 } 
 //view roles
 function viewRoles (){
-  connection.query('SELECT * FROM role', (err, res)=>{
+  connection.query('SELECT department.name, title, salary FROM role LEFT JOIN department ON role.department_id = department.id', (err, res)=>{
     if(err) throw err
     console.table(res)
     initApp()
@@ -107,7 +107,7 @@ function addDepartment(){
       message: "Enter Department Name",
       type: "input"
   }).then(answer=>{
-      connection.query('INSERT INTO department SET ?',
+      connection.query('INSERT INTO department (name) VALUE (?)',
       { name: answer.department}, err =>{
   if(err) throw err
   })
@@ -115,12 +115,17 @@ function addDepartment(){
 initApp()
   })
 }
+//display department info for addRole()
+function depChoice (){
+  let depArr = []
+ 
+}
 //add role to db
 function addRole (){
-  connection.query('SELECT * FROM department',(err,res) =>{
-      if (err) throw err
+  let departmentChoice = []
+  depChoice()
       inquirer.prompt([{
-          name: "roleTitle",
+          name: "role",
           message: "Enter Title",
           type: "input"
       },
@@ -138,19 +143,13 @@ function addRole (){
       {
           name: "department",
           message: "Choose department",
-          type: "rawlist",
-          choices: () =>{
-              let deptArray = []
-              for (let i = 0; i < res.length; i++){
-                  deptArray.push(res[i].id + res[i].name)
-              }
-              return deptArray
-          }
-          }])
-  }).then(answer => {
+          type: "list",
+          choices: departmentChoice
+          }]).then(answer => {
+            //assign id 
       let departmentID = parseInt(answer.department.split("")[0])
-      connection.query('INSERT INTO role SET?', {
-          title: answer.roleTitle,
+      connection.query('INSERT INTO role (title, salary, department_id) VALUES (?,?,?)', {
+          title: answer.role,
           salary: answer.salary,
           department_id: departmentID
       },
@@ -161,7 +160,7 @@ function addRole (){
 initApp()
   })
   }
-//Global Variables
+//Global Variable
 let jobs = addRole()
 //create new employee to db
 function addEmployee (){
@@ -198,5 +197,21 @@ connection.query('INSERT INTO employee SET ?',
 initApp()
 })
 }
+//global variable
+const roleArr = []
+//display roles for updateEmployee()
+function displayRoles(){
+  connection.query('SELECT * FROM role',(err,res) =>{
+    if (err) throw err
+    for(let i = 0; i < res.length; i++){
+      roleArr.push(`${res[i].id}) ${res[i].title}`)
+    }
+})
+} 
+//
+// update employee info
+// function updateEmployee(){
+// displayRoles()
 
+// }
 
