@@ -87,7 +87,8 @@ const viewDepartments= () => {
 } 
 //view roles
 const viewRoles= () => {
-    connection.query("SELECT * FROM role", (err, res) =>{
+    const query = "SELECT * FROM role"
+    connection.query(query, (err, res) =>{
         if(err) throw err
         console.table(res)
          //Return to home page
@@ -111,7 +112,8 @@ const addDepartment = () => {
         message: "Enter Department Name",
         type: "input"
     }).then(answer=>{
-        connection.query("INSERT INTO department SET ?",
+        const query ="INSERT INTO department SET ?"
+        connection.query(query,
         { name: answer.department}, err =>{
     if(err) throw err
     })
@@ -122,7 +124,8 @@ const addDepartment = () => {
 
 //add role to db
 const addRole = () => {
-   connection.query("SELECT * FROM department", (err,res)=>{
+    const query = "SELECT * FROM department"
+   connection.query(query, (err,res)=>{
     if(err) throw err
     inquirer.prompt([{
         name: "title",
@@ -155,7 +158,8 @@ const addRole = () => {
         let roleTitle = answer.title
         let roleSalary = answer.salary
         let departmentID = parseInt(answer.department.split("")[0])
-        connection.query("INSERT INTO role SET ?",[roleTitle ,roleSalary, departmentID],
+        const query = "INSERT INTO role (title, salary, department_id) VALUES (?,?,?)"
+        connection.query(query, [roleTitle ,roleSalary, departmentID],
         err => { 
             if(err) throw err 
         })
@@ -186,11 +190,12 @@ const addRole = () => {
     }]) 
     .then(answer => {
     //adding role id to employee 
-    let first_name = answer.firstName
-    let last_name = answer.lastName
+    let firName = answer.firstName
+    let laName = answer.lastName
     let employeeID = jobs.indexOf(answer.role)+1
+    const query = "INSERT INTO employee (firt_name, last_name, role_id) VALUES (?,?,?)"
     //adding response to database
-    connection.query("INSERT INTO employee SET ?",[first_name, last_name, employeeID]
+    connection.query(query,[first_name, last_name, employeeID]
     , err =>{
         if(err) throw err
     })
@@ -201,7 +206,8 @@ const addRole = () => {
 //update employee role in db
 function updateEmployee(){
     let updateRole = addRole()
-    connection.query("SELECT * FROM employee", (err,res)=>{
+    const query = "SELECT * FROM employee"
+    connection.query(query, (err,res)=>{
              if(err) throw err 
     inquirer.prompt([{
         name:"employee",
@@ -216,14 +222,21 @@ function updateEmployee(){
         }
     },
     {
-        name: "title",
+        name: "newTitle",
         message: "Enter the updated role of employee",
         type: "list",
-        choices: updateRole //use addRole() to select new role
+        choices: ()=>{
+            let arrRole = []
+            for(let i =0; i< res.length; i++){
+                arrRole.push(`${res[i].title} ${res[i].salary} ${res[i].department_id}`)
+            }
+            return arrRole
+        }
     }]).then(answer =>{
         let emp_id = parseInt(answer.employee.split("")[0])
         let role_id = updateRole.indexOf(answer.role)+1
-        connection.query("UPDATE employee SET role_id = ? WHERE id =?",[emp_id, role_id],err =>{
+        const query = "UPDATE employee SET role_id = ? WHERE id =?"
+        connection.query(query,[emp_id, role_id],err =>{
             if(err) throw err
             initApp()
         })
