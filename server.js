@@ -169,17 +169,17 @@ const addRole = () => {
    })
   }
   //retrieve all roles
-  const retrieveRoles = () =>{
-    let newRole = []
-    connection.query('SELECT title FROM role', (err, res)=>{
-      if(err) throw err
-      console.log(res)
-      for(let i = 0; i < res.length; i++){
-        newRole.push(res[i].title)
-      }
-      return newRole
-    })
-  }
+  // const retrieveRoles = () =>{
+  //   let newRole = []
+  //   connection.query('SELECT title FROM role', (err, res)=>{
+  //     if(err) throw err
+  //     console.log(res)
+  //     for(let i = 0; i < res.length; i++){
+  //       newRole.push(res[i].title)
+  //     }
+  //     return newRole
+  //   })
+  // }
   //add employee to db
   const addEmployee = () => {
 
@@ -189,7 +189,7 @@ const addRole = () => {
 
       for(let i = 0; i < res.length; i++){
         newRole.push(res[i].title)
-      }
+      } 
 
     
       inquirer
@@ -228,8 +228,14 @@ const addRole = () => {
   
 //update employee role in db
 const updateEmployee = () => {
+  const updateRole =[]
+  connection.query('SELECT title FROM role', (err, res)=>{
+    if(err) throw err
+
+    for(let i = 0; i < res.length; i++){
+      updateRole.push(res[i].title)
+    } 
     
-    let updateRole =  retrieveRoles()
     const query = "SELECT * FROM employee"
     connection.query(query, (err,res)=>{
              if(err) throw err 
