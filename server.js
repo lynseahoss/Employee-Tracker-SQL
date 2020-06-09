@@ -66,7 +66,7 @@ function initApp () {
         addEmployee()
         break
 
-      case "Update Employee info":
+      case "Update Employee role":
         updateEmployee()
         break
       
@@ -153,12 +153,10 @@ function addRole() {
             return depOption
         }
     }]).then(answer =>{
+        let roleTitle = answer.title
+        let roleSalary = answer.salary
         let departmentID = parseInt(answer.department.split("")[0])
-        connection.query("INSERT INTO role SET ?",{
-            title: answer.role,
-            salary: answer.salary,
-            department_id: departmentID  
-        },
+        connection.query("INSERT INTO role SET ?",[ roleTitle ,roleSalary, departmentID ],
         err => { 
             if(err) throw err 
         })
@@ -167,7 +165,7 @@ function addRole() {
     })
    })
   }
-
+  const jobs = []
   //add employee to db
   function addEmployee (){
     inquirer
@@ -203,4 +201,7 @@ function addRole() {
     initApp()
     })
     }
-    
+//update employee role in db
+function updateEmployee(){
+    connection.query()
+}
