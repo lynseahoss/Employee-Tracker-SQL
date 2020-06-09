@@ -136,18 +136,18 @@ const addRole = () => {
         name: "salary",
         message: "Enter salary amount",
         type: "input",
-        validate: function(value) {
+        validate: function(value) {  //enusures user is entering valid number
             if (isNaN(value) === false) {
               return true;
             }
-            return false;
+            return "Enter Valid Value";
           }
     },
     {
         name: "department",
         message: "Choose department",
         type: "list",
-        choices: ()=>{
+        choices: ()=>{ //displays all departments
             let depOption = []
             for(let i =0; i< res.length; i++){
                 depOption.push(`${res[i].id} ${res[i].name}`)
@@ -214,7 +214,7 @@ const addRole = () => {
       let firstName = answer.firstName
       let lastName = answer.lastName
       let role_id = answer.role
-      const query = "INSERT INTO employee SET ?"
+      const query = "INSERT INTO employee VALUE (?,?,?)"
       //adding response to database
       connection.query(query, [firstName, lastName, role_id]
       , err =>{
@@ -243,7 +243,7 @@ const updateEmployee = () => {
         name:"employee",
         message: "Enter employee that needs to be updated",
         type: "list",
-        choices: ()=>{
+        choices: ()=>{ //displays all employees
             let arrEmp = []
             for(let i =0; i< res.length; i++){
                 arrEmp.push(`${res[i].id} ${res[i].first_name} ${res[i].last_name}`)
@@ -259,7 +259,7 @@ const updateEmployee = () => {
         
     }]).then(answer =>{
         let emp_id = parseInt(answer.employee.split("")[0])
-        let role_id = updateRole.indexOf(answer.role_id)+1
+        let role_id = answer.role_id
         const query = "UPDATE employee SET role_id = ? WHERE id =?"
         connection.query(query,[emp_id, role_id],err =>{
             if(err) throw err
@@ -269,4 +269,4 @@ const updateEmployee = () => {
     
 
     })
-}
+  })}
