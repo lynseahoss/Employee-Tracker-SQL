@@ -38,6 +38,7 @@ const initApp = () => {
         "Update Employee role",
         "Remove Employee",
         "Remove Role",
+        "Remove Department",
         "Exit"
       ]
     })
@@ -74,10 +75,15 @@ const initApp = () => {
         case "Remove Employee":
           removeEmployee();
           break;
-        
+
         case "Remove Role":
           removeRole();
-             break;
+          break;
+
+        case "Remove Department":
+          removeDepartment();
+          break;
+
         case "Exit":
           connection.end();
           break;
@@ -108,8 +114,8 @@ const viewRoles = () => {
 //view employees
 const viewEmployees = () => {
   const query =
-    "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id";
-    // "SELECT * FROM employee"
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role FROM employee LEFT JOIN role on employee.id = role.department_id";
+  //"SELECT * FROM employee LEFT JOIN role on role.department_id"
   connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -317,7 +323,7 @@ const removeRole = () => {
           message: "Choose the role that needs to be deleted",
           type: "list",
           choices: () => {
-            //displays all employees
+            //displays all roles
             let removeRole = [];
             for (let i = 0; i < res.length; i++) {
               removeRole.push({
@@ -334,6 +340,41 @@ const removeRole = () => {
         const query = "DELETE FROM role WHERE id = ?";
         //adding response to database
         connection.query(query, answer.title, err => {
+          if (err) throw err;
+        });
+        //Return to home page
+        initApp();
+      });
+  });
+};
+const removeDepartment = () => {
+  let query = "SELECT * FROM department";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "name",
+          message: "Choose the Department that needs to be deleted",
+          type: "list",
+          choices: () => {
+            //displays all departments
+            let removeDept = [];
+            for (let i = 0; i < res.length; i++) {
+              removeDept.push({
+                name: `${res[i].name}`,
+                value: res[i].id
+              });
+            }
+            return removeDept;
+          }
+        }
+      ])
+      .then(answer => {
+        console.log(answer);
+        const query = "DELETE FROM department WHERE id = ?";
+        //adding response to database
+        connection.query(query, answer.name, err => {
           if (err) throw err;
         });
         //Return to home page
