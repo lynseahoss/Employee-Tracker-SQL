@@ -36,6 +36,8 @@ const initApp = () => {
         "Add Role",
         "Add Employee",
         "Update Employee role",
+        "Remove Employee",
+        "Remove Role",
         "Exit"
       ]
     })
@@ -69,6 +71,13 @@ const initApp = () => {
           updateEmployee();
           break;
 
+        case "Remove Employee":
+          removeEmployee();
+          break;
+        
+        case "Remove Role":
+          removeRole();
+             break;
         case "Exit":
           connection.end();
           break;
@@ -77,7 +86,8 @@ const initApp = () => {
 };
 //view departments
 const viewDepartments = () => {
-  connection.query("SELECT * FROM department", (err, res) => {
+  const query = "SELECT * FROM department";
+  connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
     //Return to home page
@@ -86,7 +96,8 @@ const viewDepartments = () => {
 };
 //view roles
 const viewRoles = () => {
-  const query = "SELECT * FROM role";
+  const query =
+    "SELECT department.name AS department, role.id, role.title, role.salary, role.id FROM role LEFT JOIN department on role.department_id = department.id";
   connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -96,7 +107,9 @@ const viewRoles = () => {
 };
 //view employees
 const viewEmployees = () => {
-  const query = "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id";
+  const query =
+    "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id";
+    // "SELECT * FROM employee"
   connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -216,42 +229,115 @@ const updateEmployee = () => {
   connection.query("SELECT * FROM role", (err, results) => {
     const query = "SELECT * FROM employee";
     connection.query(query, (err, res) => {
-        if (err) throw err;
-        inquirer
-          .prompt([
-            {
-              name: "employee",
-              message: "Enter employee that needs to be updated",
-              type: "list",
-              choices: () => {
-                //displays all employees
-                let arrEmp = [];
-                for (let i = 0; i < res.length; i++) {
-                  arrEmp.push(
-                    {name:`${res[i].first_name} ${res[i].last_name}`, value: res[i].id}
-                  );
-                }
-                return arrEmp;
+      if (err) throw err;
+      inquirer
+        .prompt([
+          {
+            name: "employee",
+            message: "Choose the employee that needs to be updated",
+            type: "list",
+            choices: () => {
+              //displays all employees
+              let arrEmp = [];
+              for (let i = 0; i < res.length; i++) {
+                arrEmp.push({
+                  name: `${res[i].first_name} ${res[i].last_name}`,
+                  value: res[i].id
+                });
               }
-            },
-            {
-              name: "newTitle",
-              message: "Enter the updated role of employee",
-              type: "list",
-              choices: results.map(role => ({
-                name: role.title,
-                value: role.id
-              }))
+              return arrEmp;
             }
-          ])
-          .then(answer => {
-            console.log(answer);
-            const query = "UPDATE employee SET role_id = ? WHERE id =?";
-            connection.query(query, [answer.newTitle, answer.employee], err => {
-              if (err) throw err;
-              initApp();
-            });
+          },
+          {
+            name: "newTitle",
+            message: "Enter the updated role of employee",
+            type: "list",
+            choices: results.map(role => ({
+              name: role.title,
+              value: role.id
+            }))
+          }
+        ])
+        .then(answer => {
+          console.log(answer);
+          const query = "UPDATE employee SET role_id = ? WHERE id =?";
+          connection.query(query, [answer.newTitle, answer.employee], err => {
+            if (err) throw err;
+            initApp();
           });
-      });
+        });
     });
-  }
+  });
+};
+
+const removeEmployee = () => {
+  let query = "SELECT * FROM employee";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "employee",
+          message: "Choose employee that needs to be deleted",
+          type: "list",
+          choices: () => {
+            //displays all employees
+            let removeEmp = [];
+            for (let i = 0; i < res.length; i++) {
+              removeEmp.push({
+                name: `${res[i].first_name} ${res[i].last_name}`,
+                value: res[i].id
+              });
+            }
+            return removeEmp;
+          }
+        }
+      ])
+      .then(answer => {
+        console.log(answer);
+        const query = "DELETE FROM employee WHERE id = ?";
+        //adding response to database
+        connection.query(query, answer.employee, err => {
+          if (err) throw err;
+        });
+        //Return to home page
+        initApp();
+      });
+  });
+};
+
+const removeRole = () => {
+  let query = "SELECT * FROM role";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "title",
+          message: "Choose the role that needs to be deleted",
+          type: "list",
+          choices: () => {
+            //displays all employees
+            let removeRole = [];
+            for (let i = 0; i < res.length; i++) {
+              removeRole.push({
+                name: `${res[i].title}`,
+                value: res[i].id
+              });
+            }
+            return removeRole;
+          }
+        }
+      ])
+      .then(answer => {
+        console.log(answer);
+        const query = "DELETE FROM role WHERE id = ?";
+        //adding response to database
+        connection.query(query, answer.title, err => {
+          if (err) throw err;
+        });
+        //Return to home page
+        initApp();
+      });
+  });
+};
